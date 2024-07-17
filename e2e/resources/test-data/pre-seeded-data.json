@@ -1,0 +1,10 @@
+{
+    "reusable": false,
+    "users": [
+        {
+            "name": "johndoe",
+            "email": "divya@allytest902.onmicrosoft.com",
+            "password": "VNEXT_PASSWORD_HOSTED_ENV"
+        }
+    ]
+}
