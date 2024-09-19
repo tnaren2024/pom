@@ -1,0 +1,90 @@
+test('Login with valid credentials and add participant', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const consumerPage = new ConsumerPage(page);
+
+  await loginPage.navigateToLoginPage();
+  await loginPage.fillUserId('nthodeti');
+  await loginPage.fillPassword('Hyperdrive@UI@5814');
+  await loginPage.submitLogin();
+  await loginPage.validateLoginSuccess();
+
+  await consumerPage.navigateToConsumerDashboard();
+  await consumerPage.dismissDialog();
+  await consumerPage.navigateToAddParticipant();
+  await consumerPage.fillParticipantDetails('consumer_babu', 'consumer_dis_babu', 'GG-HYPERDRIVE-FEATURE-TESTER', 'Narendra.B.Thodeti@aexp.com');
+  await consumerPage.submitParticipant();
+  await consumerPage.navigateToAddUseCase();
+});
+
+test('Login with invalid credentials', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+
+  await loginPage.navigateToLoginPage();
+  await loginPage.fillUserId('nthodeti');
+  await loginPage.fillPassword('invalidpassword');
+  await loginPage.submitLogin();
+
+  // Add assertion to check for login failure (e.g., error message, incorrect URL)
+});
+
+// Add more test cases with different scenarios and validations
+
+==================================================================================
+class ConsumerPage {
+  constructor(page) {
+    this.page = page;
+  }
+
+  async navigateToConsumerDashboard() {
+    await this.page.goto('https://hyperdrive-qa.aexp.com/consumer/dashboard');
+  }
+
+  async dismissDialog() {
+    await this.page.getByRole('dialog').getByRole('button').click();
+  }
+
+  async navigateToAddParticipant() {
+    await this.page.goto('https://hyperdrive-qa.aexp.com/consumer/dashboard/addparticipant');
+  }
+
+  async fillParticipantDetails(consumerName, consumerDescription, readWriteGroup, emailDistributionAddress) {
+    await this.page.getByLabel('Consumer Name').fill(consumerName);
+    await this.page.getByLabel('Consumer Description').fill(consumerDescription);
+    await this.page.getByLabel('Read/Write Group').fill(readWriteGroup);
+    await this.page.getByLabel('Email Distribution Address').fill(emailDistributionAddress);
+  }
+
+  async submitParticipant() {
+    await this.page.goto('https://hyperdrive-qa.aexp.com/consumer/dashboard');
+  }
+
+  async navigateToAddUseCase() {
+    await this.page.goto('https://hyperdrive-qa.aexp.com/consumer/dashboard/addusecase');
+  }
+}
+=================================================================================
+class LoginPage {
+  constructor(page) {
+    this.page = page;
+  }
+
+  async navigateToLoginPage() {
+    await this.page.goto('https://authbluesvcqa-vip.phx.aexp.com/ssoi/auth?method=GET&requestid=0882edf2-3');
+  }
+
+  async fillUserId(userId) {
+    await this.page.getByLabel('User ID').fill(userId);
+  }
+
+  async fillPassword(password) {
+    await this.page.getByLabel('Password').fill(password);
+  }
+
+  async submitLogin() {
+    await this.page.getByRole('button', { name: 'Log In' }).click();
+  }
+
+  async validateLoginSuccess() {
+    await expect(this.page.url()).toContain('https://hyperdrive-qa.aexp.com/consumer/dashboard');
+  }
+}
