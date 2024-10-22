@@ -206,3 +206,102 @@ class ConsumerRegistionPage {
 }
 
 export default ConsumerRegistionPage;
+[
+  {
+    "description": "Positive test case - Valid form submission",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "this is qa producer data",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Narendra.B.Thodeti@aexp.com"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Positive test case - Valid form submission with special characters and alphanumeric",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "this is qa producer data @@@ @#$%^&& 1232453",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Narendra.B.Thodeti@aexp.com"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  
+  {
+    "description": "Positive test case - Valid form submission with single character",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "v",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Narendra.B.Thodeti@aexp.com"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Negative test case - Passing discription as empty",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "  ",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Vipin.Pande1@aexp.com"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Negative test case - Name is too long",
+    "data": {
+      "name": "QA-consumer name is too long",
+      "discription": "this is qa producer data",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Vipin.Pande1@aexp.com"
+    },
+    "expected": {
+      "validationType": "Name is too long"
+    }
+  },
+  {
+    "description": "Negative test case - Description is too long",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "this is qa testing Producer Description-Description is too long",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Vipin.Pande1@aexp.com"
+    },
+    "expected": {
+      "validationType": "Description is too long"
+    }
+  },
+  {
+    "description": "Negative test case - Invalid email format",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "this is qa producer data",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Vipin.Pand@aexp"
+    },
+    "expected": {
+      "validationType": "Email should be @aexp.com"
+    }
+  },
+  {
+    "description": "Negative test case - Invalid Email domain format",
+    "data": {
+      "name": "QA-consumer",
+      "discription": "this is qa producer data",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "Vipin.Pand@gmail.com"
+    },
+    "expected": {
+      "validationType": "Email should be @aexp.com"
+    }
+  }
+]
