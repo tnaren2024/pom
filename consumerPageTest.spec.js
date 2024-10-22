@@ -17,18 +17,19 @@ test.describe("Consumer Details and Registration Page Validation", () => {
     await page.waitForLoadState("domcontentloaded");
   });
 
-  async function navigateToConsumerRegistration() {
+  const navigateToConsumerRegistration = async () => {
     await homePage.profile();
     await homePage.selectConsumer();
     await homePage.addnewRegistration();
     consumerRegistionPage = new ConsumerRegistionPage(page);
-  }
+  };
 
   consumerFromData.forEach(({ description, data, expected }) => {
     test(description, async () => {
       const randomSuffix = Math.floor(Math.random() * 1000 + 1);
       await navigateToConsumerRegistration();
       
+      // Registering a new consumer
       await consumerRegistionPage.registerNewConsumer(
         `${data.name}${randomSuffix}`,
         data.description,
@@ -41,15 +42,29 @@ test.describe("Consumer Details and Registration Page Validation", () => {
     });
   });
 
-  async function validateConsumerRegistration(validationType) {
+  const validateConsumerRegistration = async (validationType) => {
     const validationMessages = {
-      success: () => expect.soft(page).toHaveURL("https://hyperdrive-dev.aexp.com/consumer/dashboard/addparticipant"),
-      "Name is too long": async () => validateErrorMessage(consumerRegistionPage.getLongConsumerNameError(), "Name is too long"),
-      "Description is too long": async () => expect.soft(await consumerRegistionPage.getLongDescriptionError()).toContain("Description is too long"),
-      "Email should be @aexp.com": async () => expect.soft(await consumerRegistionPage.getInvalidEmailError()).toContain("Email should be @aexp.com"),
-      "Invalid IIQ Group": async () => expect.soft(await consumerRegistionPage.getInvalidIIQGroupError()).toContain("Invalid IIQ Group"),
-      "Group ID not found in IIQ": async () => expect.soft(await consumerRegistionPage.getInvalidIIQGroupError()).toContain("Group ID not found in IIQ."),
-      "Value cannot be empty": async () => expect.soft(await consumerRegistionPage.getValueCannotBeEmptyError()).toContain("The value cannot be empty."),
+      success: async () => {
+        await expect.soft(page).toHaveURL("https://hyperdrive-dev.aexp.com/consumer/dashboard/addparticipant");
+      },
+      "Name is too long": async () => {
+        await validateErrorMessage(await consumerRegistionPage.getLongConsumerNameError(), "Name is too long");
+      },
+      "Description is too long": async () => {
+        await validateErrorMessage(await consumerRegistionPage.getLongDescriptionError(), "Description is too long");
+      },
+      "Email should be @aexp.com": async () => {
+        await validateErrorMessage(await consumerRegistionPage.getInvalidEmailError(), "Email should be @aexp.com");
+      },
+      "Invalid IIQ Group": async () => {
+        await validateErrorMessage(await consumerRegistionPage.getInvalidIIQGroupError(), "Invalid IIQ Group");
+      },
+      "Group ID not found in IIQ": async () => {
+        await validateErrorMessage(await consumerRegistionPage.getInvalidIIQGroupError(), "Group ID not found in IIQ.");
+      },
+      "Value cannot be empty": async () => {
+        await validateErrorMessage(await consumerRegistionPage.getValueCannotBeEmptyError(), "The value cannot be empty.");
+      },
     };
 
     if (validationMessages[validationType]) {
@@ -57,13 +72,12 @@ test.describe("Consumer Details and Registration Page Validation", () => {
     } else {
       throw new Error(`Unhandled validation type: ${validationType}`);
     }
-  }
+  };
 
-  async function validateErrorMessage(actualMessagePromise, expectedMessage) {
-    const actualMessage = await actualMessagePromise;
+  const validateErrorMessage = async (actualMessage, expectedMessage) => {
     console.log("Actual message:", actualMessage);
     await expect.soft(actualMessage).toContain(expectedMessage);
-  }
+  };
 
   test("Verify user action menu", async () => {
     await homePage.profile();
@@ -107,19 +121,17 @@ test.describe("Consumer Details and Registration Page Validation", () => {
     await validateInputAndExpectError("  ", consumerRegistionPage.valueCannotBeEmptyError);
   });
 
-  async function validateInputAndExpectError(inputValue, errorMessageLocator) {
+  const validateInputAndExpectError = async (inputValue, errorMessageLocator) => {
     await consumerRegistionPage.consumerName.fill(inputValue);
     await consumerRegistionPage.nameValidateBtn.click();
     await expect.soft(errorMessageLocator).toBeVisible();
-  }
+  };
 
   test.afterEach(async () => {
     await homePage.quit();
   });
 });
-========================================================================
-
-  import { expect } from "@playwright/test";
+============================================import { expect } from "@playwright/test";
 
 class ConsumerRegistionPage {
   constructor(page) {
@@ -141,7 +153,7 @@ class ConsumerRegistionPage {
       invalidEmailError: page.locator('//div/span[text()="Email should be @aexp.com"]'),
       valueCannotBeEmptyError: page.locator('//span[text()="The value cannot be empty."]'),
       consumerHeader: page.locator('//h4[normalize-space()="Consumer Dashboard"]'),
-      section3: page.locator('[data-testid="section3"]')
+      section3: page.locator('[data-testid="section3"]'),
     };
   }
 
@@ -206,102 +218,257 @@ class ConsumerRegistionPage {
 }
 
 export default ConsumerRegistionPage;
-[
+=========================================[
   {
-    "description": "Positive test case - Valid form submission",
+    "description": "Test valid consumer registration",
     "data": {
-      "name": "QA-consumer",
-      "discription": "this is qa producer data",
+      "name": "ValidConsumer",
+      "description": "A valid consumer description",
       "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Narendra.B.Thodeti@aexp.com"
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
     },
     "expected": {
       "validationType": "success"
     }
   },
   {
-    "description": "Positive test case - Valid form submission with special characters and alphanumeric",
+    "description": "Test consumer registration with long name",
     "data": {
-      "name": "QA-consumer",
-      "discription": "this is qa producer data @@@ @#$%^&& 1232453",
+      "name": "ThisIsAVeryLongConsumerNameExceedingTheLimit",
+      "description": "Description is fine",
       "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Narendra.B.Thodeti@aexp.com"
-    },
-    "expected": {
-      "validationType": "success"
-    }
-  },
-  
-  {
-    "description": "Positive test case - Valid form submission with single character",
-    "data": {
-      "name": "QA-consumer",
-      "discription": "v",
-      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Narendra.B.Thodeti@aexp.com"
-    },
-    "expected": {
-      "validationType": "success"
-    }
-  },
-  {
-    "description": "Negative test case - Passing discription as empty",
-    "data": {
-      "name": "QA-consumer",
-      "discription": "  ",
-      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Vipin.Pande1@aexp.com"
-    },
-    "expected": {
-      "validationType": "Value cannot be empty"
-    }
-  },
-  {
-    "description": "Negative test case - Name is too long",
-    "data": {
-      "name": "QA-consumer name is too long",
-      "discription": "this is qa producer data",
-      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Vipin.Pande1@aexp.com"
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
     },
     "expected": {
       "validationType": "Name is too long"
     }
   },
   {
-    "description": "Negative test case - Description is too long",
+    "description": "Test consumer registration with invalid email",
     "data": {
-      "name": "QA-consumer",
-      "discription": "this is qa testing Producer Description-Description is too long",
+      "name": "ValidConsumer",
+      "description": "Description is fine",
       "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Vipin.Pande1@aexp.com"
+      "emailDlAddress": "invalid-email"
+    },
+    "expected": {
+      "validationType": "Email should be @aexp.com"
+    }
+  },
+  {
+    "description": "Test consumer registration with empty name",
+    "data": {
+      "name": "",
+      "description": "Description is fine",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with empty description",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with empty email",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "A valid description",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": ""
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with invalid IIQ group",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "A valid description",
+      "readWriteGroup": "invalidIIQGroup",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Invalid IIQ Group"
+    }
+  },
+  {
+    "description": "Test consumer registration with name containing special characters",
+    "data": {
+      "name": "Consumer@#123",
+      "description": "A valid description",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Test consumer registration with numeric name",
+    "data": {
+      "name": "12345",
+      "description": "Numeric name test",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Test consumer registration with excessively long description",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "A".repeat(500),
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
     },
     "expected": {
       "validationType": "Description is too long"
     }
   },
   {
-    "description": "Negative test case - Invalid email format",
+    "description": "Test consumer registration with blank spaces in name",
     "data": {
-      "name": "QA-consumer",
-      "discription": "this is qa producer data",
+      "name": "   ",
+      "description": "A valid description",
       "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Vipin.Pand@aexp"
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with valid @aexp.com email",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "Valid description",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Test consumer registration with uppercase name",
+    "data": {
+      "name": "VALIDCONSUMER",
+      "description": "Uppercase name",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Test consumer registration with lowercase name",
+    "data": {
+      "name": "validconsumer",
+      "description": "Lowercase name",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Test consumer registration with mixed case name",
+    "data": {
+      "name": "ValiDConsuMer",
+      "description": "Mixed case name",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "success"
+    }
+  },
+  {
+    "description": "Test consumer registration with no group",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "No group test",
+      "readWriteGroup": "",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with non-aexp.com email",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "Valid description",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "email@example.com"
     },
     "expected": {
       "validationType": "Email should be @aexp.com"
     }
   },
   {
-    "description": "Negative test case - Invalid Email domain format",
+    "description": "Test consumer registration with empty name and description",
     "data": {
-      "name": "QA-consumer",
-      "discription": "this is qa producer data",
+      "name": "",
+      "description": "",
       "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
-      "emailDlAddress": "Vipin.Pand@gmail.com"
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with invalid email format",
+    "data": {
+      "name": "ValidConsumer",
+      "description": "A valid description",
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "invalid.email.com"
     },
     "expected": {
       "validationType": "Email should be @aexp.com"
+    }
+  },
+  {
+    "description": "Test consumer registration with empty name and group",
+    "data": {
+      "name": "",
+      "description": "A valid description",
+      "readWriteGroup": "",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Value cannot be empty"
+    }
+  },
+  {
+    "description": "Test consumer registration with excessively long name and description",
+    "data": {
+      "name": "A".repeat(300),
+      "description": "A".repeat(500),
+      "readWriteGroup": "GG-HYPERDRIVE-FEATURE-TESTER",
+      "emailDlAddress": "NARENDRA.B.THODETI@AESP.COM"
+    },
+    "expected": {
+      "validationType": "Name is too long"
     }
   }
 ]
