@@ -1,0 +1,94 @@
+### **Positive Test Scenarios**
+1. Verify that the user can successfully select and define the "Use Case Purpose."
+2. Verify that the "Sources & Event Types" can be added without errors.
+3. Verify that the user can select and specify "Event-level Access."
+4. Verify that the user can optionally specify "Attribute-level Access."
+5. Verify that the "I Agree" checkbox can be selected.
+6. Verify that the "Submit" button is enabled after all required fields are completed.
+7. Verify that clicking "Submit" successfully sends the access request.
+8. Verify that the "Cancel Request" button navigates back without submitting.
+9. Verify that all user-entered data is saved correctly when progressing through steps.
+10. Verify that navigation between the steps (e.g., "Back" button) works as expected.
+
+### **Negative Test Scenarios**
+1. Verify that the "Submit" button remains disabled if mandatory fields are left blank.
+2. Verify that attempting to proceed without selecting "I Agree" displays an error message.
+3. Verify that invalid or incomplete data in "Sources & Event Types" prevents submission.
+4. Verify that skipping "Event-level Access" causes appropriate validation errors.
+5. Verify that canceling the request without confirmation does not submit the form.
+6. Verify that invalid navigation between steps does not result in data corruption.
+7. Verify behavior when the system times out during the request process.
+8. Verify the response if the server rejects the request due to backend validation failures.
+9. Verify the application’s behavior if the user reloads the page mid-process.
+10. Verify handling of duplicate requests for the same use case purpose.Based on the visible image, here are potential **test scenarios** for the "Request Access" workflow in the application:
+
+### **Positive Test Scenarios**
+1. Verify that the user can successfully select and define the "Use Case Purpose."
+2. Verify that the "Sources & Event Types" can be added without errors.
+3. Verify that the user can select and specify "Event-level Access."
+4. Verify that the user can optionally specify "Attribute-level Access."
+5. Verify that the "I Agree" checkbox can be selected.
+6. Verify that the "Submit" button is enabled after all required fields are completed.
+7. Verify that clicking "Submit" successfully sends the access request.
+8. Verify that the "Cancel Request" button navigates back without submitting.
+9. Verify that all user-entered data is saved correctly when progressing through steps.
+10. Verify that navigation between the steps (e.g., "Back" button) works as expected.
+
+### **Negative Test Scenarios**
+1. Verify that the "Submit" button remains disabled if mandatory fields are left blank.
+2. Verify that attempting to proceed without selecting "I Agree" displays an error message.
+3. Verify that invalid or incomplete data in "Sources & Event Types" prevents submission.
+4. Verify that skipping "Event-level Access" causes appropriate validation errors.
+5. Verify that canceling the request without confirmation does not submit the form.
+6. Verify that invalid navigation between steps does not result in data corruption.
+7. Verify behavior when the system times out during the request process.
+8. Verify the response if the server rejects the request due to backend validation failures.
+9. Verify the application’s behavior if the user reloads the page mid-process.
+10. Verify handling of duplicate requests for the same use case purpose.
+
+
+Here are **test scenarios** for the visible functionality in the updated screenshot:
+
+### **Positive Test Scenarios**
+1. Verify that the "Event Source" and "Event Type" are displayed correctly with relevant details.
+2. Verify that the associated "Team Name" and "Email Distribution Group" are displayed as expected.
+3. Verify that the "Rule Name" and other metadata (e.g., tags, event source ID) are displayed properly.
+4. Verify that the "Attribute-level Access" section loads and displays accurate access type information.
+5. Verify that the "I Agree" checkbox can be selected without issues.
+6. Verify that clicking the "Submit" button successfully submits the access request when all details are correct.
+7. Verify that the "Back" button navigates to the previous screen without data loss.
+8. Verify that the "Cancel Request" button clears the current access request and navigates to the dashboard.
+
+### **Negative Test Scenarios**
+1. Verify that leaving the "I Agree" checkbox unselected disables the "Submit" button.
+2. Verify that invalid data (e.g., corrupted event source or rule details) in the displayed fields prevents submission.
+3. Verify that missing or incomplete mandatory fields (e.g., event source details) show appropriate error messages.
+4. Verify the system's behavior when clicking "Submit" without an active internet connection.
+5. Verify how the system handles a timeout during the submission process.
+6. Verify that clicking "Cancel Request" without confirmation does not save any data.
+7. Verify the application's behavior if the backend rejects the request due to validation errors.
+8. Verify handling of duplicate entries in the "Event Source" or "Rule Name" fields.
+9. Verify that the "Submit" button does not work if data integrity is compromised during navigation (e.g., skipping steps).
+10. Verify that incorrect or unsupported access types in "Attribute-level Access" trigger appropriate warnings.Here are **test scenarios** for the visible functionality in the updated screenshot:
+
+### **Positive Test Scenarios**
+1. Verify that the "Event Source" and "Event Type" are displayed correctly with relevant details.
+2. Verify that the associated "Team Name" and "Email Distribution Group" are displayed as expected.
+3. Verify that the "Rule Name" and other metadata (e.g., tags, event source ID) are displayed properly.
+4. Verify that the "Attribute-level Access" section loads and displays accurate access type information.
+5. Verify that the "I Agree" checkbox can be selected without issues.
+6. Verify that clicking the "Submit" button successfully submits the access request when all details are correct.
+7. Verify that the "Back" button navigates to the previous screen without data loss.
+8. Verify that the "Cancel Request" button clears the current access request and navigates to the dashboard.
+
+### **Negative Test Scenarios**
+1. Verify that leaving the "I Agree" checkbox unselected disables the "Submit" button.
+2. Verify that invalid data (e.g., corrupted event source or rule details) in the displayed fields prevents submission.
+3. Verify that missing or incomplete mandatory fields (e.g., event source details) show appropriate error messages.
+4. Verify the system's behavior when clicking "Submit" without an active internet connection.
+5. Verify how the system handles a timeout during the submission process.
+6. Verify that clicking "Cancel Request" without confirmation does not save any data.
+7. Verify the application's behavior if the backend rejects the request due to validation errors.
+8. Verify handling of duplicate entries in the "Event Source" or "Rule Name" fields.
+9. Verify that the "Submit" button does not work if data integrity is compromised during navigation (e.g., skipping steps).
+10. Verify that incorrect or unsupported access types in "Attribute-level Access" trigger appropriate warnings.
