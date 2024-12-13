@@ -10,6 +10,8 @@ def relve = utils.releaseVersionNumber
 println "Version: ${ver}, Snapshot: ${snapve} and Release Version: ${relve}."
 
 node('cicd-build') {
+    
+    // ===== Step 1: Checkout Code =====
     stage("Checkout") {
         scmCheckout {
             deleteWorkspace = 'false'
@@ -17,37 +19,70 @@ node('cicd-build') {
         }
     }
 
+    // ===== Step 2: Disable IPv6 =====
+    stage("Disable IPv6") {
+        steps {
+            sh '''
+                echo "Disabling IPv6..."
+                sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+                sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+                sudo sysctl -p
+                echo "IPv6 Disabled."
+            '''
+        }
+    }
+
+    // ===== Step 3: Verify Network Connectivity =====
+    stage("Verify Network") {
+        steps {
+            sh '''
+                echo "Testing connectivity to Playwright download server..."
+                curl -4 -I https://playwright.azureedge.net/builds/chromium/1148/chromium-linux.zip || echo "Failed to connect"
+            '''
+        }
+    }
+
+    // ===== Step 4: Playwright Test =====
     stage("Playwright Test") {
         environment {
             NODE_OPTIONS = "--dns-result-order=ipv4first"
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+            PLAYWRIGHT_BROWSERS_PATH = "/tmp/playwright-browsers" // Preinstalled Chromium
         }
         steps {
-            runSeleniumTestsOnSauceLabs {
-                buildToolType = "node"
-                branchName = "${branch}"
-                executionType = "playwright"
-                saucectlBinaryLocation = "https://artifactory.aexp.com/artifactory/ci-internal/saucectl/saucectl_0.143.0_linux_64-bit.tar.gz"
-                invokeTRAUS = "yes"
-                testCaseManagementSystem = "jira"
-                user = "narendra.b.thodeti@aexp.com"
+            sh '''
+                echo "Forcing IPv4 for Playwright..."
+                echo "Installing Playwright dependencies..."
+                npm install --force
+                echo "Running Playwright tests..."
+                node --dns-result-order=ipv4first my-playwright-script.js
+            '''
+        }
+    }
+
+    // ===== Step 5: Upload Results =====
+    stage("trausUpload") {
+        steps {
+            sh '''
+                echo "Zipping artifacts..."
+                zip -r "artifacts_${JOB_BASE_NAME}_${BUILD_NUMBER}.zip" "artifacts/"
+            '''
+            trausUpload {
+                isTrausProperties = 'no'
+                testcaseID = "TC21571"
+                testsetID = "TS4821"
+                listOfFiles = "*.zip"
+                testCaseManagementSystem = "rally"
+                emails = "narendra.b.thodeti@aexp.com"
+                comment = "rally comment"
             }
         }
     }
 
-    stage("trausUpload") {
-        sh '''zip -r "artifacts_${JOB_BASE_NAME}_${BUILD_NUMBER}.zip" "artifacts/"'''
-        trausUpload {
-            isTrausProperties = 'no'
-            testcaseID = "TC21571"
-            testsetID = "TS4821"
-            listOfFiles = "*.zip"
-            testCaseManagementSystem = "rally"
-            emails = "narendra.b.thodeti@aexp.com"
-            comment = "rally comment"
-        }
-    }
-
+    // ===== Step 6: Archive Artifacts =====
     stage("Archive Artifacts") {
-        archiveArtifacts artifacts: "**/artifacts/**"
+        steps {
+            archiveArtifacts artifacts: "**/artifacts/**"
+        }
     }
 }
